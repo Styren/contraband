@@ -1,0 +1,9 @@
+# Rust
+/target/
+
+# Editors
+*.swp
+*.swo
+*.iml
+.vscode
+.idea
