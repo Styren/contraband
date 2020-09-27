@@ -34,7 +34,6 @@ impl<T: Send + Sync> Injected for Value<T> {
 impl<T: Injected<Output = T>> Injected for Arc<T> {
     type Output = Self;
     fn resolve(graph: &mut Graph, imported_graphs: &[&Graph]) -> Self::Output {
-        println!("XX");
         T::resolve(graph, imported_graphs).into()
     }
 }
