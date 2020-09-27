@@ -1,6 +1,5 @@
 #![warn(
     clippy::use_self,
-    clippy::cargo,
 )]
 //! Contraband is a web framework for building modular applications in Rust with dependency
 //! injection and performant higher-level abstractions. It is build on top of
