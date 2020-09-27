@@ -1,6 +1,6 @@
 use proc_macro2::{Ident, Span};
-use syn::Meta;
 use std::collections::HashMap;
+use syn::Meta;
 
 pub(crate) struct ModuleArgs {
     pub(crate) controllers: Vec<syn::Path>,
@@ -30,32 +30,35 @@ impl ModuleArgs {
                                 vec.push(path);
                             } else {
                                 return Err(syn::Error::new_spanned(
-                                        nv.path,
-                                        "Attribute guard expects a path!",
+                                    nv.path,
+                                    "Attribute guard expects a path!",
                                 ));
                             }
                         }
                     } else {
                         return Err(syn::Error::new_spanned(
-                                nv.path,
-                                "Unknown attribute key is specified.",
-                        ))
+                            nv.path,
+                            "Unknown attribute key is specified.",
+                        ));
                     }
-                },
+                }
                 Ok(Meta::Path(path)) => {
                     return Err(syn::Error::new_spanned(
-                            path,
-                            "Unknown attribute key is specified.",
+                        path,
+                        "Unknown attribute key is specified.",
                     ))
-                },
+                }
                 Ok(arg) => {
                     return Err(syn::Error::new_spanned(arg, "Unknown attribute."));
-                },
+                }
                 Err(_) => {}
             }
         }
         attrs.retain(|attr| {
-            attr.path.get_ident().and_then(|x| path_to_vec.get(x)).is_none()
+            attr.path
+                .get_ident()
+                .and_then(|x| path_to_vec.get(x))
+                .is_none()
         });
         Ok(Self {
             controllers,

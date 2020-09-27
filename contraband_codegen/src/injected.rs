@@ -27,21 +27,28 @@ impl<'a> ToTokens for InjectedBody<'a> {
 pub(crate) struct InjectedBody<'a> {
     graph_ident: &'a Ident,
     imported_graph_ident: &'a Ident,
-    fields: Vec<syn::Field>
+    fields: Vec<syn::Field>,
 }
 
 impl<'a> InjectedBody<'a> {
-    pub(crate) fn new(graph_ident: &'a Ident, imported_graph_ident: &'a Ident, data: &syn::DataStruct) -> syn::Result<Self> {
+    pub(crate) fn new(
+        graph_ident: &'a Ident,
+        imported_graph_ident: &'a Ident,
+        data: &syn::DataStruct,
+    ) -> syn::Result<Self> {
         let mut fields = Vec::new();
         match &data.fields {
             syn::Fields::Named(fl) => {
                 for field in fl.named.iter() {
                     fields.push(field.to_owned());
                 }
-            },
-            syn::Fields::Unit => {},
+            }
+            syn::Fields::Unit => {}
             fields => {
-                return Err(syn::Error::new_spanned(fields, "Unnamed structs are not allowed."));
+                return Err(syn::Error::new_spanned(
+                    fields,
+                    "Unnamed structs are not allowed.",
+                ));
             }
         }
         Ok(Self {
@@ -51,4 +58,3 @@ impl<'a> InjectedBody<'a> {
         })
     }
 }
-

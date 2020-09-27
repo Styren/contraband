@@ -1,12 +1,12 @@
-use contraband::{Injectable, controller};
-use std::sync::Arc;
-use serde::{Serialize, Deserialize};
 use crate::service::{BookService, InsertBook};
 use actix_web::{web, HttpResponse};
+use contraband::{controller, Injectable};
+use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
 #[derive(Clone, Injectable)]
 pub struct BookController {
-    book_service: Arc<BookService>
+    book_service: Arc<BookService>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -37,10 +37,14 @@ impl BookController {
 
     #[post]
     async fn add_book(self, input: web::Json<NewBookInput>) -> HttpResponse {
-        match self.book_service.add_book(InsertBook {
-            title: input.title.clone(),
-            author: input.author.clone(),
-        }).await {
+        match self
+            .book_service
+            .add_book(InsertBook {
+                title: input.title.clone(),
+                author: input.author.clone(),
+            })
+            .await
+        {
             Ok(()) => HttpResponse::Ok().finish(),
             Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
         }

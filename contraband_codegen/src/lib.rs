@@ -10,16 +10,16 @@ extern crate proc_macro;
 
 use proc_macro::TokenStream;
 use proc_macro2::Span;
-use quote::{format_ident, quote, ToTokens};
-use syn::{DeriveInput, parse_macro_input, ItemImpl, ItemStruct, Ident};
 use proc_macro2::TokenStream as TokenStream2;
-mod route;
+use quote::{format_ident, quote, ToTokens};
+use syn::{parse_macro_input, DeriveInput, Ident, ItemImpl, ItemStruct};
 mod args;
 mod injected;
 mod module;
-use crate::route::GuardType;
+mod route;
 use crate::injected::InjectedBody;
 use crate::module::ModuleArgs;
+use crate::route::GuardType;
 use args::Args;
 use std::str::FromStr;
 
@@ -110,7 +110,10 @@ pub fn injectable(input: TokenStream) -> TokenStream {
             Ok(fields) => Ok(fields),
             err => err,
         },
-        _ => Err(syn::Error::new_spanned(&ast, "Can only be applied to structs")),
+        _ => Err(syn::Error::new_spanned(
+            &ast,
+            "Can only be applied to structs",
+        )),
     };
     match fields {
         Ok(fi) => {
@@ -130,7 +133,7 @@ pub fn injectable(input: TokenStream) -> TokenStream {
             };
             TokenStream::from(expanded)
         }
-        Err(err) => err.to_compile_error().into()
+        Err(err) => err.to_compile_error().into(),
     }
 }
 
@@ -161,7 +164,7 @@ pub fn module(_: TokenStream, item: TokenStream) -> TokenStream {
             };
             TokenStream::from(expanded)
         }
-        Err(err) => err.to_compile_error().into()
+        Err(err) => err.to_compile_error().into(),
     }
 }
 
@@ -186,23 +189,21 @@ impl Method {
                             match Args::new(list.nested.into_iter().collect()) {
                                 Ok(ar) => {
                                     args = Some(ar);
-                                },
-                                Err(e) => {
-                                    err = Some(e)
                                 }
+                                Err(e) => err = Some(e),
                             }
-                            return false
+                            return false;
                         }
                     }
-                },
+                }
                 Ok(syn::Meta::Path(path)) => {
                     if let Some(ident) = path.get_ident() {
                         if let Ok(gt) = GuardType::from_str(&*ident.to_string()) {
                             guard_type = Some(gt);
-                            return false
+                            return false;
                         }
                     }
-                },
+                }
                 Ok(_) => {}
                 Err(_) => {}
             }
@@ -220,7 +221,7 @@ impl Method {
                 args: args.unwrap_or_default(),
                 impl_item: impl_item.clone(),
             })),
-            None => Ok(None)
+            None => Ok(None),
         }
     }
 }
@@ -230,11 +231,12 @@ impl ToTokens for Method {
         let Self {
             name,
             guard_type,
-            args: Args {
-                path,
-                guards,
-                wrappers,
-            },
+            args:
+                Args {
+                    path,
+                    guards,
+                    wrappers,
+                },
             impl_item,
         } = self;
         let target = &impl_item.sig.ident;
@@ -270,8 +272,8 @@ pub fn controller(attr: TokenStream, item: TokenStream) -> TokenStream {
             match Method::new(item_method) {
                 Ok(Some(method)) => {
                     methods.push(method);
-                },
-                Ok(None) => {},
+                }
+                Ok(None) => {}
                 Err(err) => {
                     return err.to_compile_error().into();
                 }
@@ -323,8 +325,6 @@ pub fn controller(attr: TokenStream, item: TokenStream) -> TokenStream {
             };
             TokenStream::from(expanded)
         }
-        Err(err) => {
-            err.to_compile_error().into()
-        }
+        Err(err) => err.to_compile_error().into(),
     }
 }

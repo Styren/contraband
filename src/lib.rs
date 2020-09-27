@@ -1,7 +1,4 @@
-#![warn(
-    clippy::use_self,
-    clippy::cargo,
-)]
+#![warn(clippy::use_self)]
 //! Contraband is a web framework for building modular applications in Rust with dependency
 //! injection and performant higher-level abstractions. It is build on top of
 //! [`actix-web`](https://crates.io/crates/actix-web).
@@ -42,14 +39,14 @@
 //!
 //! * [GitHub repository](https://github.com/styren/contraband)
 //! * [Examples](https://github.com/styren/contraband/tree/master/examples)
-pub mod graph;
-pub mod module;
-pub mod core;
 pub mod config;
+pub mod core;
+pub mod graph;
 pub mod log;
+pub mod module;
 
-extern crate contraband_codegen;
 extern crate actix_rt;
+extern crate contraband_codegen;
 
-pub use contraband_codegen::*;
 pub use actix_rt::System as Runtime;
+pub use contraband_codegen::*;

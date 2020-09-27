@@ -1,15 +1,15 @@
 #[macro_use]
 extern crate diesel;
 
-use diesel::sqlite::SqliteConnection;
+use crate::controller::BookController;
+use crate::service::BookService;
 use contraband::core::ContrabandApp;
 use contraband::module;
 use contraband_diesel::DieselPoolModule;
-use crate::controller::BookController;
-use crate::service::BookService;
+use diesel::sqlite::SqliteConnection;
 
-pub mod schema;
 mod controller;
+pub mod schema;
 mod service;
 
 type SqliteModule = DieselPoolModule<SqliteConnection>;
@@ -22,30 +22,29 @@ struct AppModule;
 
 #[contraband::main]
 async fn main() -> std::io::Result<()> {
-    ContrabandApp::new()
-        .start::<AppModule>()
-        .await
+    ContrabandApp::new().start::<AppModule>().await
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use service::Book;
-    use controller::NewBookInput;
     use actix_web::test;
+    use controller::NewBookInput;
+    use service::Book;
 
     #[contraband::test]
     async fn add_book() {
-        let mut server = ContrabandApp::new()
-            .test_server::<AppModule>()
-            .await;
+        let mut server = ContrabandApp::new().test_server::<AppModule>().await;
 
         let input = NewBookInput {
             title: "Bilbo Baggins".to_string(),
             author: "J.R.R. Tolkien".to_string(),
         };
 
-        let post = test::TestRequest::post().uri("/book").set_json(&input).to_request();
+        let post = test::TestRequest::post()
+            .uri("/book")
+            .set_json(&input)
+            .to_request();
         test::call_service(&mut server, post).await;
 
         let get = test::TestRequest::get().uri("/book").to_request();
