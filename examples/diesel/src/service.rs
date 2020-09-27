@@ -1,12 +1,12 @@
 use crate::schema::books;
-use diesel::sqlite::SqliteConnection;
 use async_diesel::*;
-use serde::{Deserialize, Serialize};
+use contraband::graph::Value;
+use contraband::Injectable;
 use diesel::prelude::*;
 use diesel::r2d2::ConnectionManager;
+use diesel::sqlite::SqliteConnection;
 use r2d2::Pool;
-use contraband::Injectable;
-use contraband::graph::Value;
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Queryable)]
 pub struct Book {
@@ -47,8 +47,6 @@ impl BookService {
 
     pub async fn get_books(&self) -> Result<Vec<Book>, AsyncError> {
         use crate::schema::books::dsl::*;
-        books
-            .load_async::<Book>(&self.pool)
-            .await
+        books.load_async::<Book>(&self.pool).await
     }
 }

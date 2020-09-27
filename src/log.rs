@@ -1,13 +1,13 @@
+use crate::graph::Graph;
 use futures_util::future::{ok, Ready};
 use std::sync::Arc;
-use crate::graph::Graph;
 
 #[derive(Clone, Copy)]
 pub enum LogLevel {
     Debug,
     Info,
     Warn,
-    Error
+    Error,
 }
 
 pub trait LoggingProvider: Sync + Send {
@@ -49,7 +49,6 @@ impl LoggingProvider for ConsoleLoggingProvider {
     }
 }
 
-
 impl crate::graph::Injected for Logger {
     type Output = Self;
     fn resolve(_: &mut crate::graph::Graph, _: &[&Graph]) -> Self {
@@ -60,7 +59,7 @@ impl crate::graph::Injected for Logger {
 #[derive(Clone)]
 pub struct Logger {
     logging_provider: Arc<dyn LoggingProvider>,
-    log_level: LogLevel
+    log_level: LogLevel,
 }
 
 impl Logger {
@@ -104,7 +103,7 @@ impl actix_web::FromRequest for Logger {
     type Error = actix_web::Error;
     type Future = Ready<Result<Self, Self::Error>>;
     type Config = ();
-#[inline]
+    #[inline]
     fn from_request(req: &actix_web::HttpRequest, _: &mut actix_web::dev::Payload) -> Self::Future {
         match req.app_data::<actix_web::web::Data<Self>>() {
             Some(st) => ok(st.get_ref().clone()),

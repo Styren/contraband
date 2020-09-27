@@ -2,13 +2,13 @@ extern crate rustls;
 
 use actix_tls::rustls::ServerConfig as RustlsServerConfig;
 
-use actix_web::{App, HttpServer, dev::Service};
-use listenfd::ListenFd;
-use crate::module::{Context, ResolvedModule, ModuleFactory};
 use super::graph::Graph;
-use std::sync::Arc;
+use crate::log::{ConsoleLoggingProvider, LogLevel, Logger, LoggingProvider};
+use crate::module::{Context, ModuleFactory, ResolvedModule};
+use actix_web::{dev::Service, App, HttpServer};
+use listenfd::ListenFd;
 use std::collections::HashMap;
-use crate::log::{LogLevel, ConsoleLoggingProvider, LoggingProvider, Logger};
+use std::sync::Arc;
 
 struct AppConfig {
     pub port: u16,
@@ -57,8 +57,7 @@ impl ContrabandApp {
         }
     }
 
-    pub fn load_config(_: HashMap<Option<String>, toml::Value>) {
-    }
+    pub fn load_config(_: HashMap<Option<String>, toml::Value>) {}
 
     fn configure(module: Arc<ResolvedModule>, cfg: &mut actix_web::web::ServiceConfig) {
         for controller in &module.controllers {
@@ -71,7 +70,10 @@ impl ContrabandApp {
 
     /// Sets the logging provider of the application. This provider will be used when the [`Logger`] is
     /// injected.
-    pub fn set_logging_provider<T: LoggingProvider + 'static>(mut self, logging_provider: T) -> Self {
+    pub fn set_logging_provider<T: LoggingProvider + 'static>(
+        mut self,
+        logging_provider: T,
+    ) -> Self {
         self.app_config.logging_provider = Arc::new(logging_provider);
         self
     }
@@ -98,10 +100,9 @@ impl ContrabandApp {
         let mut listenfd = ListenFd::from_env();
         let mut ctx: Context = self.app_config.register_global_providers();
         let module = Arc::new(T::get_module().build(&mut ctx));
-        let mut server = HttpServer::new(move ||
-            App::new()
-            .configure(|cfg| Self::configure(module.clone(), cfg))
-        );
+        let mut server = HttpServer::new(move || {
+            App::new().configure(|cfg| Self::configure(module.clone(), cfg))
+        });
 
         if cfg!(feature = "rustls") && self.app_config.tls_config.is_some() {
             server = if let Some(l) = listenfd.take_tcp_listener(0).unwrap() {
@@ -109,7 +110,7 @@ impl ContrabandApp {
             } else {
                 server.bind_rustls(
                     format!("0.0.0.0:{}", self.app_config.port),
-                    self.app_config.tls_config.unwrap()
+                    self.app_config.tls_config.unwrap(),
                 )?
             }
         } else {
@@ -124,19 +125,16 @@ impl ContrabandApp {
     }
 
     pub async fn test_server<T: ModuleFactory>(
-        mut self
+        mut self,
     ) -> impl Service<
         Response = actix_web::dev::ServiceResponse,
         Request = actix_http::Request,
-        Error = actix_web::Error>
-    {
+        Error = actix_web::Error,
+    > {
         use actix_web::test;
 
         let mut ctx: Context = self.app_config.register_global_providers();
         let module = Arc::new(T::get_module().build(&mut ctx));
-        test::init_service(
-            App::new()
-            .configure(|cfg| Self::configure(module.clone(), cfg))
-        ).await
+        test::init_service(App::new().configure(|cfg| Self::configure(module.clone(), cfg))).await
     }
 }

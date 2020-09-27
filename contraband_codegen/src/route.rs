@@ -1,7 +1,7 @@
 use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::{ToTokens, TokenStreamExt};
-use syn::Ident;
 use std::str::FromStr;
+use syn::Ident;
 
 #[derive(PartialEq)]
 pub(crate) enum GuardType {
@@ -33,14 +33,13 @@ impl GuardType {
 }
 
 impl FromStr for GuardType {
-
     type Err = ();
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
-            "get"  => Ok(GuardType::Get),
-            "post"  => Ok(GuardType::Post),
-            "put"  => Ok(GuardType::Put),
+            "get" => Ok(GuardType::Get),
+            "post" => Ok(GuardType::Post),
+            "put" => Ok(GuardType::Put),
             "delete" => Ok(GuardType::Delete),
             "head" => Ok(GuardType::Head),
             "connect" => Ok(GuardType::Connect),
@@ -51,7 +50,6 @@ impl FromStr for GuardType {
         }
     }
 }
-
 
 impl ToTokens for GuardType {
     fn to_tokens(&self, stream: &mut TokenStream2) {

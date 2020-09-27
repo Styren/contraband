@@ -1,5 +1,5 @@
-use syn::{AttributeArgs, NestedMeta};
 use proc_macro2::Span;
+use syn::{AttributeArgs, NestedMeta};
 
 pub(crate) struct Args {
     pub(crate) path: syn::LitStr,
@@ -32,8 +32,8 @@ impl Args {
                                 guards.push(path);
                             } else {
                                 return Err(syn::Error::new_spanned(
-                                        nv.path,
-                                        "Attribute guard expects a path!",
+                                    nv.path,
+                                    "Attribute guard expects a path!",
                                 ));
                             }
                         }
@@ -43,13 +43,13 @@ impl Args {
                                 wrappers.push(path);
                             } else {
                                 return Err(syn::Error::new_spanned(
-                                        nv.path,
-                                "Attribute wrap expects type",
+                                    nv.path,
+                                    "Attribute wrap expects type",
                                 ));
                             }
                         }
                     }
-                },
+                }
                 NestedMeta::Meta(syn::Meta::NameValue(nv)) => {
                     if nv.path.is_ident("path") {
                         if let syn::Lit::Str(lit) = nv.lit {

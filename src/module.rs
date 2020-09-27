@@ -1,8 +1,8 @@
-use std::any::TypeId;
 use super::graph::{Graph, Injected};
-use std::sync::Arc;
-use std::collections::{HashMap, HashSet};
 use actix_web::web::ServiceConfig;
+use std::any::TypeId;
+use std::collections::{HashMap, HashSet};
+use std::sync::Arc;
 
 pub trait ServiceFactory: Send + Sync {
     fn register(&self, app: &mut ServiceConfig);
@@ -48,17 +48,26 @@ impl Module {
         self
     }
 
-    pub fn export<T>(mut self) -> Self where T: Injected + Send + Sync + 'static {
+    pub fn export<T>(mut self) -> Self
+    where
+        T: Injected + Send + Sync + 'static,
+    {
         self.exported_providers.insert(TypeId::of::<T>());
         self
     }
 
-    pub fn export_val<T>(mut self, _: &T) -> Self where T: Injected + Send + Sync + 'static {
+    pub fn export_val<T>(mut self, _: &T) -> Self
+    where
+        T: Injected + Send + Sync + 'static,
+    {
         self.exported_providers.insert(TypeId::of::<T>());
         self
     }
 
-    pub fn provide_value<T: Sync + Send + Clone>(mut self, t: T) -> Self where T: 'static {
+    pub fn provide_value<T: Sync + Send + Clone>(mut self, t: T) -> Self
+    where
+        T: 'static,
+    {
         self.provider_values.push(Box::new(|module| {
             module.graph.provide(Arc::new(t));
         }));
@@ -66,9 +75,12 @@ impl Module {
         self
     }
 
-    pub fn provide<T>(mut self) -> Self where T: Injected<Output = T> + 'static {
+    pub fn provide<T>(mut self) -> Self
+    where
+        T: Injected<Output = T> + 'static,
+    {
         self.providers.push(Box::new(|module, ctx| {
-            let mut imported_graphs = vec!(&ctx.global_providers);
+            let mut imported_graphs = vec![&ctx.global_providers];
             for module in &module.imported_modules {
                 imported_graphs.push(&module.exported_graph);
             }
@@ -78,9 +90,12 @@ impl Module {
         self
     }
 
-    pub fn controller<T>(mut self) -> Self where T: Injected<Output = T> + ServiceFactory + 'static {
+    pub fn controller<T>(mut self) -> Self
+    where
+        T: Injected<Output = T> + ServiceFactory + 'static,
+    {
         self.controllers.push(Box::new(|module, ctx| {
-            let mut imported_graphs = vec!(&ctx.global_providers);
+            let mut imported_graphs = vec![&ctx.global_providers];
             for module in &module.imported_modules {
                 imported_graphs.push(&module.exported_graph);
             }
@@ -136,8 +151,8 @@ pub trait ModuleFactory: Sized {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::module::Module;
     use crate::graph::Value;
+    use crate::module::Module;
 
     fn get_empty_ctx() -> Context {
         Context {
@@ -150,10 +165,11 @@ mod tests {
     fn test_provide_value_get_resolved() {
         let value = Value("test_str");
         let mut ctx = get_empty_ctx();
-        let resolved = Module::new()
-            .provide_value(value)
-            .build(&mut ctx);
-        assert_eq!(**resolved.graph.get_node::<Value<&str>>().unwrap(), "test_str");
+        let resolved = Module::new().provide_value(value).build(&mut ctx);
+        assert_eq!(
+            **resolved.graph.get_node::<Value<&str>>().unwrap(),
+            "test_str"
+        );
     }
 
     #[test]
@@ -162,19 +178,18 @@ mod tests {
         impl ModuleFactory for ExportingModule {
             fn get_module() -> Module {
                 let value = Value("test_str");
-                Module::new()
-                    .export_val(&value)
-                    .provide_value(value)
+                Module::new().export_val(&value).provide_value(value)
             }
         }
 
         let mut ctx = get_empty_ctx();
-        let resolved = Module::new()
-            .import::<ExportingModule>()
-            .build(&mut ctx);
+        let resolved = Module::new().import::<ExportingModule>().build(&mut ctx);
         assert_eq!(resolved.imported_modules.len(), 1);
         assert_eq!(
-            **resolved.imported_modules[0].graph.get_node::<Value<&str>>().unwrap(),
+            **resolved.imported_modules[0]
+                .graph
+                .get_node::<Value<&str>>()
+                .unwrap(),
             "test_str"
         );
     }
