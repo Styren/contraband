@@ -1,3 +1,4 @@
+//! Global logging dependency
 use crate::graph::Graph;
 use futures_util::future::{ok, Ready};
 use std::sync::Arc;

@@ -1,3 +1,4 @@
+//! Helpers for loading module configuration
 fn get_prop_str(section: &str, property: &str) -> Option<String> {
     std::env::var(format!(
         "{}__{}",

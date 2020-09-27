@@ -1,3 +1,7 @@
+//! Module generation and configuration
+//!
+//! Note: For most use-cases it is recommended to use the [module](attr.module.html) macro to
+//! generate modules.
 use super::graph::{Graph, Injected};
 use actix_web::web::ServiceConfig;
 use std::any::TypeId;

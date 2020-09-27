@@ -21,8 +21,7 @@ Add contraband and actix\_web to the list of dependencies in `Cargo.toml`
 ```toml
 [dependencies]
 actix-web = "3"
-contraband = "^0.0.1"
-contraband_codegen = "^0.0.1"
+contraband = "^0.1.0"
 ```
 
 ### Controllers
@@ -95,7 +94,6 @@ Below we use our new service for fetching users in a new route.
 
 ```rust
 #[controller]
-// ...
 impl HelloController {
     // ...
     #[get("/users/:id")]
@@ -103,8 +101,8 @@ impl HelloController {
         let name = self.user_service.get_user(id);
         HttpResponse::Ok().body(name)
     }
+    // ...
 }
-// ...
 ```
 
 However in order for the dependency to be resolved when initializing the
