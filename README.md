@@ -21,8 +21,7 @@ Add contraband and actix\_web to the list of dependencies in `Cargo.toml`
 ```toml
 [dependencies]
 actix-web = "3"
-contraband = "^0.0.1"
-contraband_codegen = "^0.0.1"
+contraband = "^0.1.0"
 ```
 
 ### Controllers
