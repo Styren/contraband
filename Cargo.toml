@@ -1,0 +1,32 @@
+[package]
+name = "contraband"
+version = "0.1.0"
+authors = ["Buster Styren <buster.styren@gmail.com>"]
+edition = "2018"
+repository = "https://github.com/styren/contraband.git"
+description = "Contraband is a web framework for building modular and scalable applications"
+categories = ["network-programming", "asynchronous", "web-programming", "web-programming::http-server", "web-programming::websocket"]
+keywords = ["http", "web", "framework", "async"]
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+contraband_codegen = { path = "./contraband_codegen" }
+actix-web = { version = "^2.0.0", features = ["rustls"] }
+actix-rt = "^1.0.0"
+listenfd = "0.3.3"
+futures-util = "0.3.5"
+rustls = { version = "0.17.0", optional = true }
+actix-tls = "1.0.0"
+toml = "0.5.6"
+chrono = "0.4.12"
+actix-http = "1.0.1"
+
+[features]
+default = ["rustls"]
+
+[workspace]
+members = [
+    "contraband_codegen",
+    "contraband_diesel",
+    "examples/diesel",
+]
