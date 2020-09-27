@@ -1,0 +1,16 @@
+[package]
+name = "diesel_example"
+version = "0.1.0"
+authors = ["Buster Styren <buster.styren@gmail.com>"]
+workspace = "../../"
+edition = "2018"
+
+[dependencies]
+actix-web = "^2.0"
+contraband = { path = "../.." }
+contraband_diesel = { path = "../../contraband_diesel" }
+serde = "1.0.107"
+futures-util = "0.3.5"
+r2d2 = "0.8.8"
+async-diesel = "0.1.0"
+diesel = { version = "1.4.4", features = ["sqlite", "r2d2"] }
