@@ -8,9 +8,12 @@ description = "Contraband is a web framework for building modular and scalable a
 categories = ["network-programming", "asynchronous", "web-programming", "web-programming::http-server", "web-programming::websocket"]
 keywords = ["http", "web", "framework", "async"]
 license = "MIT OR Apache-2.0"
+readme = "README.md"
+documentation = "https://docs.rs/contraband/"
+homepage = "https://docs.rs/contraband/"
 
 [dependencies]
-contraband_codegen = { path = "./contraband_codegen" }
+contraband_codegen = "^0.1.0"
 actix-web = { version = "^2.0.0", features = ["rustls"] }
 actix-rt = "^1.0.0"
 listenfd = "0.3.3"

@@ -541,7 +541,7 @@ dependencies = [
  "actix-tls",
  "actix-web",
  "chrono",
- "contraband_codegen",
+ "contraband_codegen 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures-util",
  "listenfd",
  "rustls 0.17.0",
@@ -551,6 +551,18 @@ dependencies = [
 [[package]]
 name = "contraband_codegen"
 version = "0.1.0"
+dependencies = [
+ "actix-rt",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "contraband_codegen"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59b3e646aa13808f7ffbe5fe87cebbbf5744916722df910f536e564538c2e246"
 dependencies = [
  "actix-rt",
  "proc-macro2",
