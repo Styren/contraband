@@ -3,9 +3,14 @@ proc-macro = true
 
 [package]
 name = "contraband_codegen"
+description = "Contraband proc macros"
 version = "0.1.0"
 authors = ["Buster Styren <buster.styren@gmail.com>"]
 edition = "2018"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+documentation = "https://docs.rs/contraband/"
+homepage = "https://docs.rs/contraband/"
 
 [dependencies]
 syn = { version = "1.0.19", features = ["full", "parsing"] }
