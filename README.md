@@ -95,7 +95,6 @@ Below we use our new service for fetching users in a new route.
 
 ```rust
 #[controller]
-// ...
 impl HelloController {
     // ...
     #[get("/users/:id")]
@@ -103,8 +102,8 @@ impl HelloController {
         let name = self.user_service.get_user(id);
         HttpResponse::Ok().body(name)
     }
+    // ...
 }
-// ...
 ```
 
 However in order for the dependency to be resolved when initializing the

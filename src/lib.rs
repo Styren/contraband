@@ -41,6 +41,7 @@
 //! * [Examples](https://github.com/styren/contraband/tree/master/examples)
 pub mod config;
 pub mod core;
+#[doc(hidden)]
 pub mod graph;
 pub mod log;
 pub mod module;
@@ -48,5 +49,6 @@ pub mod module;
 extern crate actix_rt;
 extern crate contraband_codegen;
 
+#[doc(hidden)]
 pub use actix_rt::System as Runtime;
 pub use contraband_codegen::*;

@@ -23,6 +23,7 @@ use crate::route::GuardType;
 use args::Args;
 use std::str::FromStr;
 
+/// Marks function to be run in an async runtime
 #[proc_macro_attribute]
 pub fn main(_: TokenStream, item: TokenStream) -> TokenStream {
     let mut input = syn::parse_macro_input!(item as syn::ItemFn);
@@ -50,6 +51,7 @@ pub fn main(_: TokenStream, item: TokenStream) -> TokenStream {
     .into()
 }
 
+/// Marks test function to be run in an async runtime
 #[proc_macro_attribute]
 pub fn test(_: TokenStream, item: TokenStream) -> TokenStream {
     let input = syn::parse_macro_input!(item as syn::ItemFn);
@@ -137,6 +139,41 @@ pub fn injectable(input: TokenStream) -> TokenStream {
     }
 }
 
+/// Creates a module.
+///
+/// Syntax: `#[module]`
+///
+/// ## Example
+///
+/// ```rust,no_run
+/// use contraband::core::ContrabandApp;
+/// use contraband::module;
+/// use contraband::{Injectable, controller};
+/// use contraband::core::ContrabandApp;
+/// use actix_web::HttpResponse;
+///
+/// #[derive(Clone, Injectable)]
+/// struct HelloController;
+///
+/// #[controller]
+/// impl HelloController {
+///     #[get]
+///     async fn hello_world(self) -> HttpResponse {
+///         HttpResponse::Ok().body("Hello world!")
+///     }
+/// }
+///
+/// #[module]
+/// #[controller(HelloController)]
+/// struct AppModule;
+///
+/// #[contraband::main]
+/// async fn main() -> std::io::Result<()> {
+///     ContrabandApp::new()
+///         .start::<AppModule>()
+///         .await
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn module(_: TokenStream, item: TokenStream) -> TokenStream {
     let mut input = parse_macro_input!(item as ItemStruct);
@@ -254,15 +291,28 @@ impl ToTokens for Method {
     }
 }
 
-/// Generates a controller.
+/// Creates a controller.
 ///
-/// Syntax: `#[controller("path"[, attributes])]`
+/// Syntax: `#[controller("path")]`
 ///
-/// ## Attributes:
+/// ## Example
 ///
-/// - `"path"` or `path="path"` - Raw literal string with scope for register handler. Path is prepended to the controller´s routes.
-/// - `guard=([, function_name])` - Registers list of function as guards using `actix_web::guard::fn_guard`.
-/// - `wrap=([, Middleware])"` - Registers a list of resource middleware.
+/// ```rust,no_run
+/// use contraband::{Injectable, controller};
+/// use contraband::core::ContrabandApp;
+/// use actix_web::HttpResponse;
+///
+/// #[derive(Clone, Injectable)]
+/// struct HelloController;
+///
+/// #[controller]
+/// impl HelloController {
+///     #[get]
+///     async fn hello_world(self) -> HttpResponse {
+///         HttpResponse::Ok().body("Hello world!")
+///     }
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn controller(attr: TokenStream, item: TokenStream) -> TokenStream {
     let mut input = parse_macro_input!(item as ItemImpl);

@@ -1,3 +1,4 @@
+//! Core app client
 extern crate rustls;
 
 use actix_tls::rustls::ServerConfig as RustlsServerConfig;
@@ -57,8 +58,6 @@ impl ContrabandApp {
         }
     }
 
-    pub fn load_config(_: HashMap<Option<String>, toml::Value>) {}
-
     fn configure(module: Arc<ResolvedModule>, cfg: &mut actix_web::web::ServiceConfig) {
         for controller in &module.controllers {
             controller.register(cfg);
@@ -85,6 +84,7 @@ impl ContrabandApp {
         self
     }
 
+    /// Sets network port. Default: 3000.
     pub fn set_port(mut self, port: u16) -> Self {
         self.app_config.port = port;
         self
