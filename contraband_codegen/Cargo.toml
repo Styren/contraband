@@ -1,0 +1,14 @@
+[lib]
+proc-macro = true
+
+[package]
+name = "contraband_codegen"
+version = "0.1.0"
+authors = ["Buster Styren <buster.styren@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+syn = { version = "1.0.19", features = ["full", "parsing"] }
+actix-rt = "1.0"
+quote = "1.0.6"
+proc-macro2 = "1.0.17"
