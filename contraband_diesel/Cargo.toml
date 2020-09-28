@@ -4,6 +4,7 @@ description = "Contraband module for Diesel"
 version = "0.1.0"
 authors = ["Buster Styren <buster.styren@gmail.com>"]
 edition = "2018"
+repository = "https://github.com/styren/contraband.git"
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 documentation = "https://docs.rs/contraband_diesel/"
