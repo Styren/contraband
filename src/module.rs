@@ -155,10 +155,10 @@ pub trait ModuleFactory: Sized {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate as contraband;
     use crate::graph::Value;
     use crate::module::Module;
     use crate::Injectable;
-    use crate as contraband;
 
     fn get_empty_ctx() -> Context {
         Context {
@@ -215,11 +215,9 @@ mod tests {
         let mut ctx = get_empty_ctx();
         let resolved = Module::new().import::<ExportingModule>().build(&mut ctx);
         assert_eq!(resolved.imported_modules.len(), 1);
-        assert!(
-            resolved.imported_modules[0]
-                .graph
-                .get_node::<Arc<ToTest>>()
-                .is_some()
-        );
+        assert!(resolved.imported_modules[0]
+            .graph
+            .get_node::<Arc<ToTest>>()
+            .is_some());
     }
 }
