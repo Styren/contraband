@@ -56,7 +56,7 @@ impl Module {
     where
         T: Injected + Send + Sync + 'static,
     {
-        self.exported_providers.insert(TypeId::of::<T>());
+        self.exported_providers.insert(TypeId::of::<Arc<T>>());
         self
     }
 
@@ -155,8 +155,10 @@ pub trait ModuleFactory: Sized {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate as contraband;
     use crate::graph::Value;
     use crate::module::Module;
+    use crate::Injectable;
 
     fn get_empty_ctx() -> Context {
         Context {
@@ -196,5 +198,26 @@ mod tests {
                 .unwrap(),
             "test_str"
         );
+    }
+
+    #[test]
+    fn test_imported_provider_is_reachable() {
+        #[derive(Clone, Injectable)]
+        struct ToTest;
+
+        struct ExportingModule;
+        impl ModuleFactory for ExportingModule {
+            fn get_module() -> Module {
+                Module::new().export::<ToTest>().provide::<ToTest>()
+            }
+        }
+
+        let mut ctx = get_empty_ctx();
+        let resolved = Module::new().import::<ExportingModule>().build(&mut ctx);
+        assert_eq!(resolved.imported_modules.len(), 1);
+        assert!(resolved.imported_modules[0]
+            .graph
+            .get_node::<Arc<ToTest>>()
+            .is_some());
     }
 }
