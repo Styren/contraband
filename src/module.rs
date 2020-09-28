@@ -56,7 +56,7 @@ impl Module {
     where
         T: Injected + Send + Sync + 'static,
     {
-        self.exported_providers.insert(TypeId::of::<T>());
+        self.exported_providers.insert(TypeId::of::<Arc<T>>());
         self
     }
 
