@@ -149,7 +149,6 @@ pub fn injectable(input: TokenStream) -> TokenStream {
 /// use contraband::core::ContrabandApp;
 /// use contraband::module;
 /// use contraband::{Injectable, controller};
-/// use contraband::core::ContrabandApp;
 /// use actix_web::HttpResponse;
 ///
 /// #[derive(Clone, Injectable)]
@@ -165,6 +164,112 @@ pub fn injectable(input: TokenStream) -> TokenStream {
 ///
 /// #[module]
 /// #[controller(HelloController)]
+/// struct AppModule;
+///
+/// #[contraband::main]
+/// async fn main() -> std::io::Result<()> {
+///     ContrabandApp::new()
+///         .start::<AppModule>()
+///         .await
+/// }
+/// ```
+///
+/// # Providers
+///
+/// In order to inject a dependency into our different structures we need to register it as a
+/// **provider**.
+///
+/// ## Example
+///
+/// ```rust,no_run
+/// use contraband::core::ContrabandApp;
+/// use contraband::module;
+/// use contraband::{Injectable, controller};
+/// use actix_web::HttpResponse;
+///
+/// #[derive(Clone, Injectable)]
+/// struct HelloService;
+///
+/// impl HelloService {
+///     fn get_hello<'a>(&self) -> &'a str {
+///         "Hello world!"
+///     }
+/// }
+///
+/// #[derive(Clone, Injectable)]
+/// struct HelloController {
+///     hello_service: std::sync::Arc<HelloService>
+/// }
+///
+/// #[controller]
+/// impl HelloController {
+///     #[get]
+///     async fn hello_world(self) -> HttpResponse {
+///         let ret = self.hello_service.get_hello();
+///         HttpResponse::Ok().body(ret)
+///     }
+/// }
+///
+/// #[module]
+/// #[controller(HelloController)]
+/// #[provider(HelloService)]
+/// struct AppModule;
+///
+/// #[contraband::main]
+/// async fn main() -> std::io::Result<()> {
+///     ContrabandApp::new()
+///         .start::<AppModule>()
+///         .await
+/// }
+/// ```
+///
+/// # Exporting and importing
+///
+/// Modules can be imported in order to share logic, such as database connection pools or database
+/// repositories.
+///
+/// In order to use a provider from another module it first needs to be exported, using the
+/// `export`-attribute. After which it can be imported in any other module using `import`.
+///
+/// ## Example
+///
+/// ```rust,no_run
+/// use contraband::core::ContrabandApp;
+/// use contraband::module;
+/// use contraband::{Injectable, controller};
+/// use actix_web::HttpResponse;
+///
+/// #[derive(Clone, Injectable)]
+/// struct HelloService;
+///
+/// impl HelloService {
+///     fn get_hello<'a>(&self) -> &'a str {
+///         "Hello world!"
+///     }
+/// }
+///
+/// #[module]
+/// #[export(HelloService)]
+/// #[provider(HelloService)]
+/// struct HelloModule;
+///
+/// #[derive(Clone, Injectable)]
+/// struct HelloController {
+///     hello_service: std::sync::Arc<HelloService>
+/// }
+///
+/// #[controller]
+/// impl HelloController {
+///     #[get]
+///     async fn hello_world(self) -> HttpResponse {
+///         let ret = self.hello_service.get_hello();
+///         HttpResponse::Ok().body(ret)
+///     }
+/// }
+///
+/// #[module]
+/// #[controller(HelloController)]
+/// #[import(HelloModule)]
 /// struct AppModule;
 ///
 /// #[contraband::main]
@@ -313,6 +418,18 @@ impl ToTokens for Method {
 ///     }
 /// }
 /// ```
+///
+/// When you define an `impl`-block with a `controller`-attribute both the block and all methods
+/// inside it will be parsed for specific Contraband-attributes. In the example above a
+/// `get`-request is defined on the implemented method, this will automatically register it when
+/// connected to a [module](module::attr.module.html).
+///
+/// **Note:** we don't need to import `get` since it is parsed by the `controller`-attribute
+///
+/// ## Impl method attributes
+///
+/// Valid method attributes are:
+/// * All HTTP request methods (`get`, `post`, `put`, `delete`, `head`, `connect`, `options`, `trace`, `patch`)
 #[proc_macro_attribute]
 pub fn controller(attr: TokenStream, item: TokenStream) -> TokenStream {
     let mut input = parse_macro_input!(item as ItemImpl);
