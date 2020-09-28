@@ -535,13 +535,15 @@ dependencies = [
 [[package]]
 name = "contraband"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6682d05c8458865bdb63c25e6ef2aa33126dea278b496fbb059da28c1220fc82"
 dependencies = [
  "actix-http",
  "actix-rt",
  "actix-tls",
  "actix-web",
  "chrono",
- "contraband_codegen 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "contraband_codegen 0.1.0",
  "futures-util",
  "listenfd",
  "rustls 0.17.0",
@@ -549,13 +551,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "contraband_codegen"
-version = "0.1.0"
+name = "contraband"
+version = "0.1.2"
 dependencies = [
+ "actix-http",
  "actix-rt",
- "proc-macro2",
- "quote",
- "syn",
+ "actix-tls",
+ "actix-web",
+ "chrono",
+ "contraband_codegen 0.1.0",
+ "futures-util",
+ "listenfd",
+ "rustls 0.17.0",
+ "toml",
 ]
 
 [[package]]
@@ -571,10 +579,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "contraband_codegen"
+version = "0.1.1"
+dependencies = [
+ "actix-rt",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "contraband_diesel"
 version = "0.1.0"
 dependencies = [
- "contraband",
+ "contraband 0.1.0",
+ "diesel",
+ "diesel_migrations",
+ "r2d2",
+]
+
+[[package]]
+name = "contraband_diesel"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4cf813d4456315b62ca834dc14d7698c517e806efb0d4688f498bef5a32bfe26"
+dependencies = [
+ "contraband 0.1.0",
  "diesel",
  "diesel_migrations",
  "r2d2",
@@ -645,12 +675,12 @@ dependencies = [
 
 [[package]]
 name = "diesel_example"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "actix-web",
  "async-diesel",
- "contraband",
- "contraband_diesel",
+ "contraband 0.1.0",
+ "contraband_diesel 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel",
  "futures-util",
  "r2d2",
