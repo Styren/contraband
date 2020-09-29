@@ -1,8 +1,13 @@
 # Contraband
 
-Contraband is a web framework built on top of actix for creating modular
-applications in Rust with dependency injection and performant higher-level
-abstractions.
+[![Build Status](https://github.com/Styren/contraband/workflows/Cargo%20CI/badge.svg)](https://github.com/Styren/contraband/actions)
+[![crates.io](https://meritbadge.herokuapp.com/contraband)](https://crates.io/crates/contraband)
+[![Documentation](https://docs.rs/contraband/badge.svg)](https://docs.rs/contraband)
+![License](https://img.shields.io/crates/l/contraband.svg)
+
+Contraband is a web framework built on top of
+[actix](https://github.com/actix/actix) for creating modular applications in
+Rust with dependency injection and performant higher-level abstractions.
 
 Contraband is heavily inspired by Spring Boot and Nestjs.
 
